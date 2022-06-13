@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import styled from "styled-components";
 import { mobile } from "../responsive";
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100vw;
@@ -57,6 +58,13 @@ const Button = styled.button`
   cursor: pointer;
 `;
 
+const Linki = styled.a`
+  margin: 10px 0px 5px 550px;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+`;
+
 const Register = () => {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
@@ -94,17 +102,20 @@ const Register = () => {
       <Wrapper>
         <Title>CREATE AN ACCOUNT</Title>
         <Form onSubmit={onSubmitHandler}>
-          {/* <Input placeholder="name" />
-          <Input placeholder="last name" /> */}
-          <Input type='text' placeholder="username" onChange={(e) => { setUserName(e.target.value) }} />
-          <Input type='email' placeholder="email" onChange={(e) => { setEmail(e.target.value) }} />
-          <Input type='password' placeholder="password" onChange={(e) => { setPassword(e.target.value) }} />
-          <Input type='number' placeholder="confirm password" onChange={(e) => { setNumber(e.target.value) }} />
+
+          <Input type='text' placeholder="username" onChange={(e) => { setUserName(e.target.value) }} required />
+          <Input type='email' placeholder="email" onChange={(e) => { setEmail(e.target.value) }} required />
+          <Input type='password' placeholder="password" onChange={(e) => { setPassword(e.target.value) }} required />
+          <Input type='number' placeholder="confirm password" onChange={(e) => { setNumber(e.target.value) }} required />
           <Agreement>
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
           <Button>CREATE</Button>
+          
+          <Linki>         
+            <Link to='/home'>BACK</Link>
+          </Linki>
         </Form>
       </Wrapper>
     </Container>
