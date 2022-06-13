@@ -97,8 +97,8 @@ const Login = () => {
       <Wrapper>
         <Title>SIGN IN</Title>
         <Form onSubmit={onSubmitHandler}>
-          <Input type='email' placeholder="email" onChange={(e) => { setUser({ ...user, email: e.target.value }) }} required  value='a@123.com'/>
-          <Input type='password' placeholder="password" onChange={(e) => { setUser({ ...user, password: e.target.value }) }} required value='1234' />
+          <Input type='email' placeholder="email" onChange={(e) => { setUser({ ...user, email: e.target.value }) }} required />
+          <Input type='password' placeholder="password" onChange={(e) => { setUser({ ...user, password: e.target.value }) }} required />
           <Button>LOGIN</Button>
           <Link>DO NOT YOU REMEMBER THE PASSWORD?</Link>
           <Link>CREATE A NEW ACCOUNT</Link>
