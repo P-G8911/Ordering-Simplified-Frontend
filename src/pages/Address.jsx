@@ -55,6 +55,60 @@ const Button = styled.button`
 `;
 
 const Address = () => {
+  const [address, setAddress] = useState({
+    address: undefined,
+    pincode: undefined,
+    city: undefined,
+    state: undefined,
+  });
+
+  const [orderConfirmed, setOrderConfirmed] = useState(false);
+  const [err, setErr] = useState(undefined);
+  const user_id = JSON.parse(localStorage.getItem('user')).id;
+
+  const confirmOrderHandler = (e) => {
+    e.preventDefault();
+    let orders = [];
+    axios({
+      method: 'GET',
+      url: `http://localhost:5000/api/cart/${user_id}`,
+      headers: {
+        authorization: document.cookie.split('=')[1],
+      },
+    })
+      .then((response) => {
+        orders = response.data.rows.map((order) => {
+          return {
+            product_id: order.product_id,
+            address: address.address,
+            pincode: address.pincode,
+            city: address.city,
+            state: address.state,
+          };
+        });
+
+        return axios({
+          method: 'POST',
+          url: `http://localhost:5000/api/orders`,
+          headers: {
+            authorization: document.cookie.split('=')[1],
+          },
+          data: orders,
+        });
+      })
+      .then((response) => {
+        if (response.data.err) {
+          setErr(err);
+        } else {
+          setOrderConfirmed(true);
+        }
+      });
+  };
+
+  if (orderConfirmed) {
+    return <Navigate to="/orders" />;
+  }
+
   return (
     <Container>
       <Wrapper>
@@ -63,17 +117,17 @@ const Address = () => {
           <Input
             type="text"
             placeholder="address"
-            // onChange={(e) => {
-            //   setUser({ ...user, email: e.target.value });
-            // }}
+            onChange={(e) => {
+              setAddress({ ...address, address: e.target.value });
+            }}
             required
           />
           <Input
             type="number"
             placeholder="pincode"
-            // onChange={(e) => {
-            //   setUser({ ...user, password: e.target.value });
-            // }}
+            onChange={(e) => {
+              setAddress({ ...address, pincode: e.target.value });
+            }}
             required
           />
           <Input
@@ -87,12 +141,12 @@ const Address = () => {
           <Input
             type="text"
             placeholder="city"
-            // onChange={(e) => {
-            //   setUser({ ...user, password: e.target.value });
-            // }}
+            onChange={(e) => {
+              setAddress({ ...address, city: e.target.value });
+            }}
             required
           />
-          <Button>CONFIRM ORDER</Button>
+          <Button onClick={confirmOrderHandler}>CONFIRM ORDER</Button>
         </Form>
       </Wrapper>
     </Container>

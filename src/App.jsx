@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Address from './pages/Address';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Orders from './pages/Orders';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
         <Route exact path="/product" element={<Product />} />
         <Route exact path="/productlist" element={<ProductList />} />
         <Route exact path="/address" element={<Address />} />
+        <Route exact path="/orders" element={<Orders />} />
       </Routes>
     </Router>
   );
