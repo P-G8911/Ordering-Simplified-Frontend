@@ -9,7 +9,6 @@ import Address from './pages/Address';
 import Orders from './pages/Orders';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Orders from './pages/Orders';
 
 const App = () => {
   return (

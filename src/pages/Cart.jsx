@@ -158,8 +158,65 @@ const Button = styled.button`
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [itemsFreq, setItemsFreq] = useState(new Map());
   const [err, setErr] = useState('');
   const user_id = JSON.parse(localStorage.getItem('user')).id;
+
+  const addOnClick = (item) => {
+    axios({
+      method: 'POST',
+      url: 'http://localhost:5000/api/cart',
+      data: {
+        product_id: item.product_id,
+      },
+      headers: {
+        authorization: document.cookie.split('=')[1],
+      },
+    }).then((response) => {
+      if (response.err) {
+        setErr(err);
+      } else {
+        console.log(response.data);
+        // let key = item.product_id;
+        // let value = itemsFreq.get(item.product_id) + 1;
+        // setItemsFreq((itemsFreq) => new Map(itemsFreq.set(key, value)));
+        let key = item.product_id;
+        let arr = new Array(itemsFreq.get(item.product_id))[0];
+        arr.push(response.data.cart.insertId);
+        console.log(arr);
+        setItemsFreq((itemsFreq) => new Map(itemsFreq.set(key, arr)));
+        // freq.set(item.product_id, arr);
+      }
+    });
+  };
+
+  const removeOnClick = (item) => {
+    axios({
+      method: 'DELETE',
+      url: `http://localhost:5000/api/cart/${
+        itemsFreq.get(item.product_id)[0]
+      }`,
+      headers: {
+        authorization: document.cookie.split('=')[1],
+      },
+    }).then((response) => {
+      if (response.err) {
+        setErr(err);
+      } else {
+        let key = item.product_id;
+        let arr = new Array(itemsFreq.get(item.product_id))[0];
+        arr.shift();
+        if (arr.length == 0) {
+          // setItemsFreq((itemsFreq) => new Map(itemsFreq.delete(key)));
+          let newCartItems = cartItems.filter(
+            (cartItem) => cartItem.product_id != item.product_id
+          );
+          setCartItems(newCartItems);
+        }
+        setItemsFreq((itemsFreq) => new Map(itemsFreq.set(key, arr)));
+      }
+    });
+  };
 
   useEffect(() => {
     axios({
@@ -172,7 +229,20 @@ const Cart = () => {
       if (response.data.err) {
         setErr(response.data.err);
       } else {
-        setCartItems(response.data.rows);
+        let freq = new Map();
+        let items = [];
+        response.data.rows.forEach((item) => {
+          if (freq.has(item.product_id)) {
+            let arr = freq.get(item.product_id);
+            arr.push(item.id);
+            freq.set(item.product_id, arr);
+          } else {
+            items.push(item);
+            freq.set(item.product_id, new Array([item.id]));
+          }
+        });
+        setItemsFreq(freq);
+        setCartItems(items);
       }
     });
   }, []);
@@ -206,7 +276,7 @@ const Cart = () => {
                           <b>Product:</b> {item.name}
                         </ProductName>
                         <ProductId>
-                          <b>ID:</b> {item.id}
+                          <b>ID:</b> {item.product_id}
                         </ProductId>
                         <ProductSize>
                           <b>Discount:</b> {item.discount}
@@ -215,9 +285,19 @@ const Cart = () => {
                     </ProductDetail>
                     <PriceDetail>
                       <ProductAmountContainer>
-                        <Add />
-                        <ProductAmount>2</ProductAmount>
-                        <Remove />
+                        <Add
+                          onClick={() => {
+                            addOnClick(item);
+                          }}
+                        />
+                        <ProductAmount>
+                          {itemsFreq.get(item.product_id).length}
+                        </ProductAmount>
+                        <Remove
+                          onClick={() => {
+                            removeOnClick(item);
+                          }}
+                        />
                       </ProductAmountContainer>
                       <ProductPrice>$ {item.price}</ProductPrice>
                     </PriceDetail>
