@@ -6,8 +6,9 @@ import Announcement from '../components/Announcement';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { mobile } from '../responsive';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import address from './Address';
+import authentication from '../util/auth';
 
 const Container = styled.div``;
 
@@ -161,7 +162,8 @@ const Cart = () => {
   const [itemsFreq, setItemsFreq] = useState(new Map());
   const [totalAmount, setTotalAmount] = useState(0);
   const [err, setErr] = useState('');
-  const user_id = JSON.parse(localStorage.getItem('user')).id;
+
+  let user_id = JSON.parse(localStorage.getItem('user')).id;
 
   const addOnClick = (item) => {
     axios({
@@ -229,17 +231,19 @@ const Cart = () => {
         let freq = new Map();
         let items = [];
         let tAmount = 0;
-        response.data.rows.forEach((item) => {
-          if (freq.has(item.product_id)) {
-            let arr = freq.get(item.product_id);
-            arr.push(item.id);
-            freq.set(item.product_id, arr);
-          } else {
-            items.push(item);
-            freq.set(item.product_id, new Array([item.id]));
-          }
-          tAmount += item.price;
-        });
+        if (response.data.rows) {
+          response.data.rows.forEach((item) => {
+            if (freq.has(item.product_id)) {
+              let arr = freq.get(item.product_id);
+              arr.push(item.id);
+              freq.set(item.product_id, arr);
+            } else {
+              items.push(item);
+              freq.set(item.product_id, new Array([item.id]));
+            }
+            tAmount += item.price;
+          });
+        }
         setItemsFreq(freq);
         setCartItems(items);
         setTotalAmount(tAmount);
