@@ -159,6 +159,7 @@ const Button = styled.button`
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [itemsFreq, setItemsFreq] = useState(new Map());
+  const [totalAmount, setTotalAmount] = useState(0);
   const [err, setErr] = useState('');
   const user_id = JSON.parse(localStorage.getItem('user')).id;
 
@@ -176,16 +177,11 @@ const Cart = () => {
       if (response.err) {
         setErr(err);
       } else {
-        console.log(response.data);
-        // let key = item.product_id;
-        // let value = itemsFreq.get(item.product_id) + 1;
-        // setItemsFreq((itemsFreq) => new Map(itemsFreq.set(key, value)));
         let key = item.product_id;
         let arr = new Array(itemsFreq.get(item.product_id))[0];
         arr.push(response.data.cart.insertId);
-        console.log(arr);
         setItemsFreq((itemsFreq) => new Map(itemsFreq.set(key, arr)));
-        // freq.set(item.product_id, arr);
+        setTotalAmount(totalAmount + item.price);
       }
     });
   };
@@ -214,6 +210,7 @@ const Cart = () => {
           setCartItems(newCartItems);
         }
         setItemsFreq((itemsFreq) => new Map(itemsFreq.set(key, arr)));
+        setTotalAmount(totalAmount - item.price);
       }
     });
   };
@@ -231,6 +228,7 @@ const Cart = () => {
       } else {
         let freq = new Map();
         let items = [];
+        let tAmount = 0;
         response.data.rows.forEach((item) => {
           if (freq.has(item.product_id)) {
             let arr = freq.get(item.product_id);
@@ -240,9 +238,11 @@ const Cart = () => {
             items.push(item);
             freq.set(item.product_id, new Array([item.id]));
           }
+          tAmount += item.price;
         });
         setItemsFreq(freq);
         setCartItems(items);
+        setTotalAmount(tAmount);
       }
     });
   }, []);
@@ -307,7 +307,7 @@ const Cart = () => {
             <SummaryTitle>ORDER SUMMARY</SummaryTitle>
             <SummaryItem>
               <SummaryItemText>Subtotal</SummaryItemText>
-              <SummaryItemPrice>$ 80</SummaryItemPrice>
+              <SummaryItemPrice>{totalAmount}</SummaryItemPrice>
             </SummaryItem>
             <SummaryItem>
               <SummaryItemText>Estimated Shipping</SummaryItemText>
@@ -319,7 +319,7 @@ const Cart = () => {
             </SummaryItem>
             <SummaryItem type="total">
               <SummaryItemText>Total</SummaryItemText>
-              <SummaryItemPrice>$ 80</SummaryItemPrice>
+              <SummaryItemPrice>{totalAmount}</SummaryItemPrice>
             </SummaryItem>
             <Link to="/address">
               <Button>CHECKOUT NOW</Button>
