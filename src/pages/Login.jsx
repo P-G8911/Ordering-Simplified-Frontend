@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import styled from "styled-components";
 import {mobile} from "../responsive";
+import { Link } from 'react-router-dom';
 
 const Container = styled.div`
   width: 100vw;
@@ -53,7 +54,7 @@ const Button = styled.button`
   margin-bottom: 10px;
 `;
 
-const Link = styled.a`
+const Linki = styled.a`
   margin: 8px 0px;
   font-size: 12px;
   text-decoration: underline;
@@ -100,8 +101,12 @@ const Login = () => {
           <Input type='email' placeholder="email" onChange={(e) => { setUser({ ...user, email: e.target.value }) }} required />
           <Input type='password' placeholder="password" onChange={(e) => { setUser({ ...user, password: e.target.value }) }} required />
           <Button>LOGIN</Button>
-          <Link>DO NOT YOU REMEMBER THE PASSWORD?</Link>
-          <Link>CREATE A NEW ACCOUNT</Link>
+          <Linki>         
+            <Link to='/register'>CREATE A NEW ACCOUNT</Link>
+          </Linki>
+          <Linki>         
+            <Link to='/home'>BACK</Link>
+          </Linki>
         </Form>
       </Wrapper>
     </Container>
