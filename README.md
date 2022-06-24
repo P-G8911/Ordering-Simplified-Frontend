@@ -1,4 +1,4 @@
 # Ordering-Simplified-Frontend
 
 # How it Looks ?
-<img src = "/images/image(1)" />
+<img src = "/images/image(1).png" />
