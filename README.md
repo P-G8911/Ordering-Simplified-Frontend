@@ -1,3 +1,3 @@
-# ordering-simplified-frontend
+# Ordering-Simplified-Frontend
 
 # How it Looks ?
